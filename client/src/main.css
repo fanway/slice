@@ -1,7 +1,9 @@
-.dispute div {
-  width: 30%;
+.v-centred{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
   margin: auto;
-  padding: 10px;
-  border: 3px solid grey;
-
 };

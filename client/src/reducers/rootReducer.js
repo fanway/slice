@@ -1,9 +1,7 @@
-const rootReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case: "ADD_POST"
-    default:
-      return state;
-  }
-}
+import { combineReducers } from 'redux';
+import dispute from './dispute';
+import { reducer as formReduser } from 'redux-form';
+
+const rootReducer = combineReducers({dispute, form: formReduser});
 
 export default rootReducer;

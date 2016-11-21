@@ -25,8 +25,14 @@
     "webpack": "^1.13.3"
   },
   "dependencies": {
+    "axios": "^0.15.2",
+    "babel-plugin-transform-object-rest-spread": "^6.19.0",
     "css-loader": "^0.25.0",
     "extract-text-webpack-plugin": "^1.0.1",
+    "koa-bodyparser": "^3.2.0",
+    "mongoose": "^4.6.8",
+    "react-select": "^1.0.0-rc.2",
+    "redux-form": "^6.2.0",
     "style-loader": "^0.13.1",
     "web3": "^0.17.0-beta"
   }

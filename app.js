@@ -2,8 +2,12 @@ import 'babel-polyfill';
 import Koa from 'koa';
 import fs from 'fs';
 import path from 'path';
+import userModel from './models/users';
 const router = require('koa-router')();
+const logger = require('koa-logger');
+const bodyParser = require('koa-bodyparser');
 const app = new Koa();
+app.use(logger());
 
 import webpack from 'webpack';
 import { devMiddleware, hotMiddleware } from 'koa-webpack-middleware'
@@ -14,6 +18,8 @@ app.use(devMiddleware(webpack(webpackConfig)), {
   publicPath: webpackConfig.output.publicPath
 });
 app.use(hotMiddleware(webpack(webpackConfig)));
+
+app.use(bodyParser());
 
 app.listen('3000');
 
@@ -34,7 +40,25 @@ router.get('/', async (ctx, next) => {
 router.get('/main.css', async (ctx, next) => {
     ctx.response.set('content-type', 'text/css');
     ctx.body = fs.readFileSync(path.join(__dirname, '/client/src/main.css'));
+    await next();
   });
+router.get('/dispute/options/:name', async (ctx,next) => {
+  ctx.body = {
+    options: [
+      { value: 'admin', label: 'admin' },
+      { value: 'god', label: 'god' }]};
+    // По непонятным пока причинам не работает
+    // const user = await userModel.findOne({"username": new RegExp(ctx.params.name, "i")});
+    // if (user) {
+    //   console.log(user);
+    //   ctx.body = {value: user[username], label: user[username]};
+    // };
+});
+router.post('/dispute/add', async (ctx, next) => {
+  ctx.status = 201;
+  ctx.body = 'hi!';
+  await next();
+});
 
 
 app
