@@ -15,5 +15,11 @@
 import axios from 'axios';
 
 export function fetchDispute(data) {
-  const request = axios.post
+  const request = axios.post('/add');
+
+  return (dispatch) => {
+    request.then({data}) => {
+      dispatch({type: ''})
+    }
+  }
 }

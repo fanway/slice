@@ -1,66 +1,35 @@
 import 'babel-polyfill';
-import Koa from 'koa';
-import fs from 'fs';
+import express from 'express';
 import path from 'path';
-import userModel from './models/users';
-const router = require('koa-router')();
-const logger = require('koa-logger');
-const bodyParser = require('koa-bodyparser');
-const app = new Koa();
-app.use(logger());
-
 import webpack from 'webpack';
-import { devMiddleware, hotMiddleware } from 'koa-webpack-middleware'
-import webpackConfig from './webpack.config'
+import webpackDevMiddleware from 'webpack-dev-middleware';
+import webpackHotMiddleware from 'webpack-hot-middleware';
+import config from './webpack.config';
+import userModel from './models/users';
 
-app.use(devMiddleware(webpack(webpackConfig)), {
-  noinfo: false,
-  publicPath: webpackConfig.output.publicPath
-});
-app.use(hotMiddleware(webpack(webpackConfig)));
+const app = express();
 
-app.use(bodyParser());
+const compiler = webpack(config)
+app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: config.output.publicPath }))
+app.use(webpackHotMiddleware(compiler))
 
-app.listen('3000');
-
-app.use(async (ctx, next) => {
-  try {
-    await next();
-  } catch (err) {
-    ctx.body = { message: err.message };
-    ctx.status = err.status || 500;
-  }
+app.listen(3000, ()=>{
+  console.log('Server started on port 3000');
 });
 
-router.get('/', async (ctx, next) => {
-    ctx.response.set('content-type', 'text/html');
-    ctx.body = fs.readFileSync(path.join(__dirname, '/client/src/index.html'), 'utf8');
-    await next();
+app.use(express.static(__dirname + '/client/src'));
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname + '/client/src/index.html'));
+});
+
+app.get('/dispute/options/:name', (req, res) => {
+  userModel.find({"username": new RegExp(req.params.name, "i")}, (err, users) => {
+    if(err) console.log('cant find');
+    res.send(users);
   });
-router.get('/main.css', async (ctx, next) => {
-    ctx.response.set('content-type', 'text/css');
-    ctx.body = fs.readFileSync(path.join(__dirname, '/client/src/main.css'));
-    await next();
-  });
-router.get('/dispute/options/:name', async (ctx,next) => {
-  ctx.body = {
-    options: [
-      { value: 'admin', label: 'admin' },
-      { value: 'god', label: 'god' }]};
-    // По непонятным пока причинам не работает
-    // const user = await userModel.findOne({"username": new RegExp(ctx.params.name, "i")});
     // if (user) {
     //   console.log(user);
     //   ctx.body = {value: user[username], label: user[username]};
     // };
 });
-router.post('/dispute/add', async (ctx, next) => {
-  ctx.status = 201;
-  ctx.body = 'hi!';
-  await next();
-});
-
-
-app
-  .use(router.routes())
-  .use(router.allowedMethods());

@@ -4,11 +4,21 @@ import Select, {Creatable} from 'react-select';
 import axios from 'axios';
 
 const getOptions = (value) => {
+  if(value != '') {
   return axios.get('/dispute/options/' + value)
   .then((response) => {
-     return response.data;
-   });
-};
+    console.log(response);
+    let options = response.data.map((user) => {
+      let option = Object.assign({}, {value: user.username, label: user.username})
+        return option
+    });
+    return options;
+    })
+  .then((options) => {
+    let result = Object.assign({}, {options: options});
+    return result;
+  });
+}};
 const renderField = ({ input, label, type, className, meta: { touched, error, warning } }) => (
   <div>
     <label>{label}</label>
