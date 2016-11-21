@@ -4,7 +4,7 @@ import Dispute from '../components/dispute'
 import axios from 'axios';
 
 const handleSubmit = (data) => {
-  axios.post('/dispute/add', JSON.stringify(data))
+  axios.post('/dispute/add', data)
   .then((res) => {
     console.log(res);
   })

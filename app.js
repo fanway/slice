@@ -6,6 +6,8 @@ import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import config from './webpack.config';
 import userModel from './models/users';
+import bodyParser from 'body-parser';
+import disputeModel from './models/dispute';
 
 const app = express();
 
@@ -18,6 +20,9 @@ app.listen(3000, ()=>{
 });
 
 app.use(express.static(__dirname + '/client/src'));
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname + '/client/src/index.html'));
@@ -28,8 +33,13 @@ app.get('/dispute/options/:name', (req, res) => {
     if(err) console.log('cant find');
     res.send(users);
   });
-    // if (user) {
-    //   console.log(user);
-    //   ctx.body = {value: user[username], label: user[username]};
-    // };
+});
+
+app.post('/dispute/add', (req, res) => {
+  console.log(req.body);
+  let disputeAdd = new disputeModel(Object.assign(req.body, {complete: false}));
+  disputeAdd.save((err, disputeAdd) => {
+    if(err) console.log(err);
+    res.status = 200;
+  })
 });

@@ -1,22 +1,27 @@
-// import mongoose from '../db';
-//
-// const SchemaDispute = mongoose.Schema;
-//
-// let disputeModel = new SchemaDispute({
-//   name: {
-//     type: String,
-//     unique: true,
-//     reqiured: true
-//   }
-//   disc: String,
-//   sides: {
-//     type: [{type: Object}]
-//   },
-//   timer: Date,
-//   referee: {
-//     type: [{type: Object}]
-//   },
-//   complete: Boolean
-// });
-//
-// export default disputeModel;
+import mongoose from '../db';
+
+const SchemaDispute = mongoose.Schema;
+
+let disputeSchema = new SchemaDispute({
+  name: {
+    type: String,
+    unique: true,
+    reqiured: true
+  },
+  discription: String,
+  sides: {
+    type: Object
+  },
+  timer: Date,
+  referee: {
+    type: Array
+  },
+  complete: {
+    type: Boolean,
+    default: false
+  }
+});
+
+let disputeModel = mongoose.model('dispute', disputeSchema);
+
+export default disputeModel;
